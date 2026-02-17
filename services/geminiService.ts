@@ -5,10 +5,22 @@ const apiKey = process.env.API_KEY || '';
 // Initialize client (Assuming API_KEY is present in environment)
 // Note: In a real production app, ensure safe handling of keys.
 // For this demo, we assume the environment injects it.
-const getAiClient = () => new GoogleGenAI({ apiKey });
+const getAiClient = () => {
+  if (!apiKey) {
+    throw new Error("API Key is missing. Please check your environment configuration.");
+  }
+  return new GoogleGenAI({ apiKey });
+};
 
 export const generateTextContent = async (prompt: string): Promise<string> => {
-  if (!apiKey) throw new Error("API Key not found");
+  if (!apiKey) {
+    console.warn("No API Key found. Returning mock text for demonstration.");
+    return `[DEMO MODE - NO API KEY] 
+    
+Here is a simulated response based on your prompt: "${prompt.substring(0, 50)}..."
+    
+To see real AI generation, please configure the API_KEY environment variable.`;
+  }
   
   try {
     const ai = getAiClient();
@@ -24,7 +36,11 @@ export const generateTextContent = async (prompt: string): Promise<string> => {
 };
 
 export const generateImageContent = async (prompt: string): Promise<string> => {
-  if (!apiKey) throw new Error("API Key not found");
+  if (!apiKey) {
+    console.warn("No API Key found. Returning mock image for demonstration.");
+    // Return a placeholder image
+    return "https://placehold.co/1024x1024/050505/00f3ff?text=NexusGen+Demo+Image";
+  }
 
   try {
     const ai = getAiClient();
